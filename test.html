@@ -1,0 +1,188 @@
+<html>
+	<head>
+	
+		<style type='text/css'>
+			body{margin: 0; padding:0; background-color: silver;}
+		</style>
+
+		<script type='text/javascript'>
+			//This place is for the 2D helper
+			var sceneArray = [];
+			var objectArray = [];
+			var idObject=-1;
+		
+			function refresh(){
+				window.location.reload();
+			}
+		
+			console.log("------");
+			console.log("ready:");
+			console.log("------");
+			
+			//LE LIEN ENTRE OBJECT SUR L'ECRAN ET OBJECT JS SE FAIT PAR L'ID
+			//RESPECTER L'ID! obj*
+			function scene(){
+				console.log("Creating new scene");
+				this.sizeX = window.innerWidth;
+				this.sizeY = window.innerHeight;
+				
+				this.body = document.getElementsByTagName("body")[0];
+			
+				this.objArray = [];
+			
+				this.addEventListener = function(type, listener, useCapture){
+					if(!useCapture)
+						useCapture = false;
+					window.addEventListener(type, listener, useCapture);
+					console.log("Event added: type="+type+" listener="+listener+" useCapture="+useCapture);
+				}
+				
+				this.addObject = function(object){
+					this.objArray.push(object);
+					console.log("Object added: "+object.id);
+				}
+				
+				this.updateObject = function(object){
+					var id = object.id;
+					this.objArray[id]=object;
+					console.log("Object obj"+id+" updated");
+				}
+				
+				this.removeObject = function(object){
+					var id = object.id;
+					this.objArray[id] = null;
+					console.log("Object obj"+id+" removed from the scene");
+				}
+				
+				this.removeAllObjects = function(){
+					for(var i=0;i<objectArray.length;i++)
+					{
+						this.objArray[i] = null;
+					}
+					console.log("All objects have been removed from the scene");
+				}
+				
+				
+				//PENSER A RAJOUTER LE RENDER DES EVENTS
+				//PENSER A RAJOUTER UN RENDER POUR LE STYLE
+				this.render = function(){
+					if(!this.body)
+						this.body = document.getElementsByTagName("body")[0];
+					var text = "";
+					for(var i=0;i<this.objArray.length;i++)
+					{
+						if(this.objArray[i])
+						{
+							text += "<div id='obj"+this.objArray[i].id+"' type='"+this.objArray[i].type+"' ></div>";
+						}
+					}
+					this.body.innerHTML = text;
+					
+					var elements = document.getElementsByTagName("body")[0].getElementsByTagName("*");
+					for(var i=0;i<elements.length;i++)
+					{
+						currentElement = elements[i];
+						switch(currentElement.getAttribute("type"))
+						{
+							case "cube":
+								var id = currentElement.getAttribute("id");
+								id = idToNumber(id);
+								JSElement = this.objArray[id];
+								currentElement.style.width=JSElement.width+"px";
+								currentElement.style.height=JSElement.height+"px";
+								
+								currentElement.style.position="absolute";
+								currentElement.style.top=JSElement.posY+"px";
+								currentElement.style.left=JSElement.posX+"px";
+								
+								if(JSElement.img)
+								{
+									currentElement.style.backgroundImage = "url('"+JSElement.img+"')"
+									if(JSElement.defImage)
+									{
+										currentElement.style.backgroundPositionX = JSElement.defImg.x;
+										currentElement.style.backgroundPositionY = JSElement.defImg.y;
+									}
+								}
+								
+								currentElement.style.backgroundColor="red";
+								break;
+						}
+					}
+					console.log("Render done!");
+					console.log(i+" objects render");
+				}
+			}
+			
+			function idToNumber(id)
+			{
+				var split = id.split("obj");
+				return parseInt(split[1]);
+			}
+			
+			//PENSER A REGLER LA SCALE DE L'IMAGE
+			function object(type){
+				this.id = idObject+1;
+				idObject++;
+				
+				this.type="cube";
+				if(type)
+					this.type = type;
+				objectArray.push(this.type);
+				console.log("Creating new object: id="+this.id+" type="+this.type);
+				
+				this.img = null;
+				this.defImg = {};
+				
+				this.event = [];
+				
+				this.posX = 0;
+				this.posY = 0;
+				
+				this.width = 10;
+				this.height = 10;
+				
+				this.setPosition = function(x, y){
+					this.posX = x;
+					this.posY = y;
+				};
+				
+				this.addEventListener = function(tpe, lst, uC){
+					if(!uC)
+						uC = false
+					this.event = {type:tpe, listener:lst, useCapture: uC};
+				};
+				
+				this.defImage = function(startX, startY){
+					if(this.img)
+					{
+						this.defImg = {x: startX, y:startY};
+						console.log("Image definition set...")
+					}
+					else
+					{
+						console.error("No image to define...");
+					}
+				};
+			}
+		</script>
+	
+		<script type='text/javascript'>
+			//This page is for the game coding
+			var scene = new scene();
+			var sprite = new object("cube");
+			
+			sprite.width = 241;
+			sprite.height = 247;
+			
+			sprite.img = "sprite.jpg";
+			sprite.defImage(-117, -30);
+			scene.addObject(sprite);
+		</script>
+	
+	</head>
+	
+	<body>
+	</body>
+
+</html>
