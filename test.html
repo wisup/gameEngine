@@ -26,6 +26,8 @@
 				this.sizeX = window.innerWidth;
 				this.sizeY = window.innerHeight;
 				
+				this.isGravityOn = false;
+				
 				this.body = document.getElementsByTagName("body")[0];
 			
 				this.objArray = [];
@@ -114,6 +116,10 @@
 				}
 			}
 			
+			function physic(){
+				
+			}
+			
 			function idToNumber(id)
 			{
 				var split = id.split("obj");
@@ -142,6 +148,9 @@
 				this.width = 10;
 				this.height = 10;
 				
+				this.isFalling = false;
+				this.isSolid = false;
+				
 				this.setPosition = function(x, y){
 					this.posX = x;
 					this.posY = y;
@@ -164,6 +173,10 @@
 						console.error("No image to define...");
 					}
 				};
+				
+				this.isFalling() = function(){
+					
+				}
 			}
 		</script>
 	
@@ -177,7 +190,48 @@
 			
 			sprite.img = "sprite.jpg";
 			sprite.defImage(-117, -30);
+			
+			sprite.posX = scene.sizeX/2-sprite.width/2;
+			sprite.posY = scene.sizeY/2-sprite.height/2;
+			
+			sprite.isFalling = true;
+			sprite.isSolid = true;
+			
 			scene.addObject(sprite);
+			
+			scene.addEventListener("keydown", function(event){ control(event); });
+			
+			function control(event){
+				console.log("move");
+				var id = event.keyCode
+				switch(id)
+				{
+					case 40:
+						//down
+						break;
+						
+					case 37:
+						//left
+						break;
+					
+					case 38:
+						//up:
+						break;
+						
+					case 39:
+						//right
+						sprite.posX+=1;
+						break;
+				}
+				scene.updateObject(sprite);
+				scene.render();
+			}
+			
+			var floor = new object("cube");
+			floor.width = scene.sizeX;
+			floor.posY = 700;
+			floor.isSolid = true;
+			scene.addObject(floor);
 		</script>
 	
 	</head>
